@@ -1,0 +1,487 @@
+-- 4
+CREATE SEQUENCE seq_id_reclama
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_sponsor
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_premiu
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_jurat
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_stapan
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_caine
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_proba
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE SEQUENCE seq_id_spectator
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 999999999
+    NOCYCLE
+    NOCACHE;
+
+CREATE TABLE sponsor (
+    id_sponsor NUMBER PRIMARY KEY,
+    nume VARCHAR2(255) NOT NULL,
+    email VARCHAR2(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE reclama (
+    id_reclama NUMBER PRIMARY KEY,
+    id_sponsor NUMBER,
+
+    CONSTRAINT fk_reclama_sponsor FOREIGN KEY (id_sponsor) REFERENCES sponsor(id_sponsor)
+);
+
+CREATE TABLE jurat (
+    id_jurat NUMBER PRIMARY KEY,
+    nume VARCHAR2(255) NOT NULL,
+    telefon VARCHAR2(20) NOT NULL UNIQUE,
+    email VARCHAR2(255) NOT NULL UNIQUE,
+    salariu NUMBER
+);
+
+CREATE TABLE stapan (
+    id_stapan NUMBER PRIMARY KEY,
+    nume VARCHAR2(255) NOT NULL,
+    telefon VARCHAR2(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE catel (
+    id_caine NUMBER PRIMARY KEY,
+    nume VARCHAR2(255) NOT NULL,
+    rasa VARCHAR2(255),
+    id_stapan NUMBER,
+
+    CONSTRAINT fk_catel_stapan FOREIGN KEY (id_stapan) REFERENCES stapan(id_stapan)
+);
+
+CREATE TABLE premiu (
+    id_premiu NUMBER PRIMARY KEY,
+    tip_premiu VARCHAR2(20) CHECK (tip_premiu IN ('loc1', 'loc2', 'loc3', 'special', 'eleganta')) NOT NULL,
+    suma_de_bani NUMBER,
+    id_sponsor NUMBER,
+
+    CONSTRAINT fk_premiu_sponsor FOREIGN KEY (id_sponsor) REFERENCES sponsor(id_sponsor),
+    id_jurat NUMBER,
+    CONSTRAINT fk_premiu_jurat FOREIGN KEY (id_jurat) REFERENCES jurat(id_jurat),
+    id_caine NUMBER,
+    CONSTRAINT fk_premiu_caine FOREIGN KEY (id_caine) REFERENCES catel(id_caine)
+);
+
+CREATE TABLE proba (
+    id_proba NUMBER PRIMARY KEY,
+    tip_proba VARCHAR2(20) NOT NULL,
+    pret_bilet NUMBER
+);
+
+CREATE TABLE participare (
+    id_caine NUMBER,
+    id_proba NUMBER,
+
+    CONSTRAINT pk_participare PRIMARY KEY (id_caine, id_proba),
+    CONSTRAINT fk_participare_caine FOREIGN KEY (id_caine) REFERENCES catel(id_caine),
+    CONSTRAINT fk_participare_proba FOREIGN KEY (id_proba) REFERENCES proba(id_proba)
+);
+
+CREATE TABLE spectator (
+    id_spectator NUMBER PRIMARY KEY,
+    nume VARCHAR2(255) NOT NULL
+);
+
+CREATE TABLE accesare (
+    id_proba NUMBER,
+    id_spectator NUMBER,
+
+    CONSTRAINT pk_accesare PRIMARY KEY (id_proba, id_spectator),
+    CONSTRAINT fk_accesare_proba FOREIGN KEY (id_proba) REFERENCES proba(id_proba),
+    CONSTRAINT fk_accesare_spectator FOREIGN KEY (id_spectator) REFERENCES spectator(id_spectator)
+);
+
+-- 5
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Royal Canin', 'contact@royalcanin.com');
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Pet Resort', 'contact@petresort.com');
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Animal Society', 'contact@animalsociety.com');
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Nutricanis', 'contact@nutricanis.com');
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Dog Resort', 'contact@dogresort.com');
+INSERT INTO sponsor VALUES (seq_id_sponsor.NEXTVAL, 'Dog-Spa', 'contact@dogspa.com');
+
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 1);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 1);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 1);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 2);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 4);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 5);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 5);
+INSERT INTO reclama VALUES (seq_id_reclama.NEXTVAL, 6);
+
+INSERT INTO jurat VALUES (seq_id_jurat.NEXTVAL, 'Doctor Doofenschmirtz', '0711233445', 'heinzdoofenshmirtz@evil.inc.com', 4000);
+INSERT INTO jurat VALUES (seq_id_jurat.NEXTVAL, 'Perry Platypus', '0711233446', 'aplatypus@gmail.com', 4300);
+INSERT INTO jurat VALUES (seq_id_jurat.NEXTVAL, 'Bruce Wayne', '0722233447', 'batman@gmail.com', 4000);
+INSERT INTO jurat VALUES (seq_id_jurat.NEXTVAL, 'Leia Organa', '0722233448', 'starwars@gmail.com', 4300);
+INSERT INTO jurat VALUES (seq_id_jurat.NEXTVAL, 'Misa Amane', '0722233449', 'misamisa@gmail.com', 4300);
+
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Light Yagami', '0722233442');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Daenerys Targaryen', '0722233441');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Homura Akemi', '0722233440');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Shaggy Rogers', '0722233443');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Nona Ninth', '0722233444');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Hiccup Haddock', '0712233445');
+INSERT INTO stapan VALUES (seq_id_stapan.NEXTVAL, 'Theo Light', '0712233446');
+
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Ryuk', 'ryukyu inu', 1);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Drogon', 'xoloitzcuintle', 2);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Viserion', 'xoloitzcuintle', 2);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Rhaegal', 'xoloitzcuintle', 2);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Kyubey', 'bichon', 3);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Scooby-Doo', 'dog german', 4);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Noodle', 'borzoi', 5);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Toothless', 'labrador', 6);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Tiger', 'rottweiler', 7);
+INSERT INTO catel VALUES (seq_id_caine.NEXTVAL, 'Berry', 'terrier', 7);
+
+INSERT INTO proba VALUES (seq_id_proba.NEXTVAL, 'traseu cu obstacole', 50);
+INSERT INTO proba VALUES (seq_id_proba.NEXTVAL, 'atitudine', 20);
+INSERT INTO proba VALUES (seq_id_proba.NEXTVAL, 'freestyle', 50);
+INSERT INTO proba VALUES (seq_id_proba.NEXTVAL, 'frumusete', 0);
+INSERT INTO proba VALUES (seq_id_proba.NEXTVAL, 'disc', 30);
+
+INSERT INTO participare VALUES (1, 1);
+INSERT INTO participare VALUES (2, 1);
+INSERT INTO participare VALUES (3, 1);
+INSERT INTO participare VALUES (4, 1);
+INSERT INTO participare VALUES (8, 1);
+INSERT INTO participare VALUES (9, 1);
+INSERT INTO participare VALUES (2, 2);
+INSERT INTO participare VALUES (3, 2);
+INSERT INTO participare VALUES (4, 2);
+INSERT INTO participare VALUES (7, 2);
+INSERT INTO participare VALUES (9, 2);
+INSERT INTO participare VALUES (10, 2);
+INSERT INTO participare VALUES (1, 3);
+INSERT INTO participare VALUES (5, 3);
+INSERT INTO participare VALUES (6, 3);
+INSERT INTO participare VALUES (8, 3);
+INSERT INTO participare VALUES (9, 3);
+INSERT INTO participare VALUES (5, 4);
+INSERT INTO participare VALUES (7, 4);
+INSERT INTO participare VALUES (10, 4);
+INSERT INTO participare VALUES (1, 5);
+INSERT INTO participare VALUES (3, 5);
+INSERT INTO participare VALUES (4, 5);
+INSERT INTO participare VALUES (6, 5);
+INSERT INTO participare VALUES (8, 5);
+
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc1', 1000, 1, 1, 9);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc1', 900, 1, 2, 2);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc1', 900, 6, 3, 5);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc1', 900, 1, 1, 3);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc2', 500, 2, 2, 4);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'loc3', 250, 3, 3, 8);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'special', 100, 4, 4, 6);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'special', 50, 1, 5, 7);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'special', 20, 5, 4, 9);
+INSERT INTO premiu VALUES (seq_id_premiu.NEXTVAL, 'eleganta', 50, 5, 5, 7);
+
+INSERT INTO spectator VALUES (seq_id_spectator.NEXTVAL, 'Harleen Quinzel');
+INSERT INTO spectator VALUES (seq_id_spectator.NEXTVAL, 'Pamela Isley');
+INSERT INTO spectator VALUES (seq_id_spectator.NEXTVAL, 'Mina Harker');
+INSERT INTO spectator VALUES (seq_id_spectator.NEXTVAL, 'Paul Atreides');
+INSERT INTO spectator VALUES (seq_id_spectator.NEXTVAL, 'Jon Arbuckle');
+
+INSERT INTO accesare VALUES (1, 4);
+INSERT INTO accesare VALUES (2, 4);
+INSERT INTO accesare VALUES (3, 4);
+INSERT INTO accesare VALUES (4, 4);
+INSERT INTO accesare VALUES (5, 4);
+INSERT INTO accesare VALUES (4, 1);
+INSERT INTO accesare VALUES (5, 1);
+INSERT INTO accesare VALUES (3, 2);
+INSERT INTO accesare VALUES (5, 2);
+INSERT INTO accesare VALUES (2, 3);
+INSERT INTO accesare VALUES (4, 3);
+INSERT INTO accesare VALUES (5, 3);
+INSERT INTO accesare VALUES (1, 5);
+INSERT INTO accesare VALUES (2, 5);
+INSERT INTO accesare VALUES (5, 5);
+
+-- 6
+-- Folosind colecții, să se obțină informații despre câinii fiecărui stăpân și câștigul adus de acești câini 
+-- stăpânilor, apoi pe baza colecțiilor construite să se de termine suma de bani medie câștigată de fiecare stăpân.
+CREATE OR REPLACE PROCEDURE sase
+IS
+    TYPE castig_caine IS RECORD(
+        id catel.id_caine%TYPE,
+        bani NUMBER
+    );
+
+    TYPE castiguri_stapan IS VARRAY(100) OF castig_caine;
+
+    TYPE stapani IS TABLE OF castiguri_stapan INDEX BY PLS_INTEGER;
+    
+    v_castig castig_caine;
+    v_stapan castiguri_stapan;
+    t_stapani stapani;
+
+    i NUMBER;
+    c NUMBER;
+    sum NUMBER;
+BEGIN
+    FOR stap IN (SELECT id_stapan id_s FROM stapan) LOOP
+        v_stapan := castiguri_stapan();
+
+        FOR info IN (SELECT c.id_caine id_c, p.suma_de_bani suma
+                    FROM catel c
+                    INNER JOIN premiu p on p.id_caine = c.id_caine
+                    WHERE c.id_stapan = stap.id_s) LOOP
+            v_castig := castig_caine();
+            v_castig.id := info.id_c;
+            v_castig.bani := NVL(info.suma, 0);
+
+            v_stapan.extend(1);
+            v_stapan(v_stapan.last) := v_castig;
+        END LOOP;
+
+        t_stapani(stap.id_s) := v_stapan;
+    END LOOP;
+
+    i := NULL;
+    LOOP
+        IF i IS NULL THEN
+            i := t_stapani.first;
+        ELSE
+            i := t_stapani.next(i);
+        END IF;
+
+        DBMS_OUTPUT.PUT_LINE('Stapanul cu id ' || i || ' are');
+
+        c := 0;
+        sum := 0;
+
+        IF t_stapani(i).COUNT > 0 THEN
+            FOR j IN t_stapani(i).first..t_stapani(i).last LOOP
+                c := c + 1;
+                sum := sum + t_stapani(i)(j).bani;
+            END LOOP;
+        END IF;
+
+        IF c > 0 THEN
+            DBMS_OUTPUT.PUT_LINE(c || ' intrari si castig mediu ' || TRUNC(sum / c, 2) || '.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('0 intrari.');
+        END IF;
+
+        EXIT WHEN i = t_stapani.last;
+    END LOOP;
+END;
+
+BEGIN
+    sase;
+END;
+
+-- 7
+-- Pentru fiecare cațel, să se determine probele la care a participat.
+CREATE OR REPLACE PROCEDURE sapte
+IS
+    CURSOR probele(id_c catel.id_caine%type) IS
+        SELECT
+            p.id_proba id_p,
+            p.tip_proba tip_p,
+            p.pret_bilet pret
+        FROM proba p
+        WHERE id_c in (SELECT id_caine FROM participare WHERE id_proba = p.id_proba);
+
+    CURSOR catei IS
+        SELECT id_caine id_c
+        FROM catel;
+
+    id_c catel.id_caine%TYPE;
+BEGIN
+    OPEN catei;
+    LOOP
+        FETCH catei INTO id_c;
+        EXIT WHEN catei%NOTFOUND;
+        
+        DBMS_OUTPUT.PUT_LINE('Pentru catelul cu id ' || id_c || ' avem:');
+
+        FOR proba IN probele(id_c) LOOP
+            DBMS_OUTPUT.PUT_LINE('-> proba ' || proba.id_p || ' de tip ' || proba.tip_p || ' la care biletele au costat ' || proba.pret || ';');
+        END LOOP;
+    END LOOP;
+END;
+
+BEGIN
+    sapte;
+END;
+
+-- 8
+-- Să se determine numârul de premii câștigate de cățeii stăpânului cu numele dat ca parametru, 
+-- tratând cazul în care se potrivesc mai mulți și cazul în care nu se potrivește niciunul.
+CREATE OR REPLACE FUNCTION opt(nume_stapan stapan.nume%TYPE) 
+RETURN NUMBER
+IS
+    id_s stapan.id_stapan%TYPE;
+    nr_premii number;
+BEGIN
+    SELECT id_stapan
+    INTO id_s
+    FROM stapan
+    WHERE UPPER(nume) LIKE '%' || UPPER(nume_stapan) || '%';
+
+    SELECT COUNT(DISTINCT p.id_premiu)
+    INTO nr_premii
+    FROM stapan s
+    INNER JOIN catel c ON c.id_stapan = s.id_stapan
+    INNER JOIN premiu p ON p.id_caine = c.id_caine
+    WHERE s.id_stapan = id_s;
+
+    RETURN nr_premii;
+
+EXCEPTION
+    WHEN TOO_MANY_ROWS THEN
+        RAISE_APPLICATION_ERROR(-20008, 'Prea multi stapani cu acelasi nume.');
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20009, 'Nu avem niciun astfel de stapan.');
+END;
+
+SELECT opt('Light') FROM DUAL;
+SELECT opt('Nona') FROM DUAL;
+SELECT opt('Miku') FROM DUAL;
+
+-- 9
+-- Pentru o rasă și un tip de probă date, să se stabileasca câți spectatori 
+-- s-au uitat la probe de acel tip în care a fost prezent un câine de acea rasa.
+CREATE OR REPLACE PROCEDURE noua(
+    rasa_ceruta IN catel.rasa%TYPE,
+    proba_ceruta IN proba.tip_proba%TYPE,
+    nr_spectatori OUT NUMBER
+)
+IS
+    RASA_INEXISTENTA EXCEPTION;
+    PROBA_INEXISTENTA EXCEPTION;
+
+    nr NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO nr
+    FROM catel
+    WHERE rasa = rasa_ceruta;
+
+    IF nr = 0 THEN
+        RAISE RASA_INEXISTENTA;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO nr
+    FROM proba
+    WHERE tip_proba = proba_ceruta;
+
+    IF nr = 0 THEN
+        RAISE PROBA_INEXISTENTA;
+    END IF;
+
+    SELECT COUNT(DISTINCT s.id_spectator)
+    INTO nr
+    FROM catel c
+    INNER JOIN participare p ON c.id_caine = p.id_caine
+    INNER JOIN proba pr ON pr.id_proba = p.id_proba
+    INNER JOIN accesare a ON pr.id_proba = a.id_proba
+    INNER JOIN spectator s ON a.id_proba = s.id_spectator;
+
+    nr_spectatori := nr;
+EXCEPTION
+    WHEN RASA_INEXISTENTA THEN
+        DBMS_OUTPUT.PUT_LINE('Nu avem catei din aceasta rasa.');
+    WHEN PROBA_INEXISTENTA THEN
+        DBMS_OUTPUT.PUT_LINE('Nu avem asemenea proba.');
+END;
+
+DECLARE
+    nr_spectatori NUMBER;
+BEGIN
+    noua('xoloitzcuintle', 'atitudine', nr_spectatori);
+    DBMS_OUTPUT.PUT_LINE('Numarul de spectatori este: ' || nr_spectatori || '.');
+
+    noua('bulldog', 'atitudine', nr_spectatori);
+    noua('xoloitzcuintle', 'examen SGBD', nr_spectatori);
+END;
+
+-- 10
+-- Să nu se permită modificarea sumelor de bani aferente premiilor în ziua de vineri.
+CREATE OR REPLACE TRIGGER zece
+    BEFORE UPDATE OF suma_de_bani ON premiu
+BEGIN
+    IF TO_CHAR(SYSDATE, 'D') = '5' THEN
+        RAISE_APPLICATION_ERROR(-20010, 'Nu se poate schimba suma de bani astazi.');
+    END IF;
+END;
+
+UPDATE premiu SET suma_de_bani = suma_de_bani + 10 WHERE id_premiu = 1;
+
+-- 11
+-- Să se previna acele actualizari ale numelor juraților care le-ar face să înceapă cu litera H.
+CREATE OR REPLACE TRIGGER unsprezece
+    BEFORE UPDATE OF nume ON jurat
+FOR EACH ROW
+BEGIN
+    IF :NEW.nume LIKE 'H%' THEN
+        RAISE_APPLICATION_ERROR(-20011, 'Acest nume este invalid, deoarece nu imi place litera H la inceput.');
+    END IF;
+END;
+
+UPDATE jurat SET nume = 'Holden Caulfield' WHERE id_jurat = 3;
+
+-- 12
+-- Să nu se permita utilizatorului DB_01 să execute DROP pe schema.
+CREATE OR REPLACE TRIGGER doisprezece
+    BEFORE DROP ON DATABASE
+BEGIN
+    IF UPPER(USER) = 'DB_01' THEN
+        RAISE_APPLICATION_ERROR(-20012, 'Acest user nu poate da DROP la nimic.');
+    END IF;
+END;
+
+DROP TABLE reclama CASCADE CONSTRAINTS;
